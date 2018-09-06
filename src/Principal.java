@@ -9,8 +9,8 @@ import org.simmetrics.tokenizers.Tokenizers;
 
 public class Principal {
     
-    public static int formula(int n){
-        return n/2;
+    public static int formula(int w){        
+        return (10 + Math.abs(w))/6;
     }
 
     public static void main(String[] args) {
@@ -30,16 +30,15 @@ public class Principal {
         List<String> refs1 = tokenizador1.tokenizeToList(ref1);
         
         for(String a : refs1){
-            System.out.println("token = " + a);
+            System.out.println("\ntoken = " + a );
             if (a.length()>1){
                 int ngram = formula(a.length());
                  Tokenizer tokenizador2 = Tokenizers.qGram(ngram);
                  List<String> refs2 = tokenizador2.tokenizeToList(a);
-                 System.out.print("Tokens =");
+                 System.out.print("gram["+ngram+"]=");
                  for(String b : refs2){
                      System.out.print("," + b);
-                 }
-                 
+                 }               
                 
             }
 	}
