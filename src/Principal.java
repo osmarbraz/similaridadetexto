@@ -38,11 +38,9 @@ public class Principal {
                  System.out.print("gram["+ngram+"]=");
                  for(String b : refs2){
                      System.out.print("," + b);
-                 }               
-                
+                 }                               
             }
-	}
-        
+	}        
     }
     
 }
