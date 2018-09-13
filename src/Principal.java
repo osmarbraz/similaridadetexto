@@ -116,8 +116,8 @@ public class Principal {
      * @param args
      */
     public static void main(String[] args) {
-        String ref1 = "H. Wang, X. He, M.-W. Chang, Y. Song, R. W. White, and W. Chu. Personalized ranking model adaptation for web search. In Proceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval, pages 323-332, 2013.";
-        String ref2 = "H. Wang, et.al. Personalized ranking model adaptation for web search. In Proc. Intl. SIGIR; pg. 323 a 332, 20113.";
+//        String ref1 = "H. Wang, X. He, M.-W. Chang, Y. Song, R. W. White, and W. Chu. Personalized ranking model adaptation for web search. In Proceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval, pages 323-332, 2013.";
+//        String ref2 = "H. Wang, et.al. Personalized ranking model adaptation for web search. In Proc. Intl. SIGIR; pg. 323 a 332, 20113.";
 
 //        String ref1 = "xx xy yxy";
 //        String ref2 = "xy xx zz yy";
@@ -127,6 +127,9 @@ public class Principal {
 
 //        String ref1 = "Maria gosta de ouvir música";
 //        String ref2 = "Pedro gosta de tocar música";
+
+        String ref1 = "Maria Eduarda";
+        String ref2 = "Eduarda Maria";
 
         System.out.println(">>> Strings originais");
         System.out.println("Antes ref1 =" + ref1);
