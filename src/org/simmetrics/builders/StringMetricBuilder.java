@@ -306,6 +306,8 @@ public final class StringMetricBuilder {
 		@Override
 		StringMetric build();
 
+        public Object simplify(Simplifier replaceNonWord);
+
 	}
 
 	private static final class CompositeStringMetricBuilder implements

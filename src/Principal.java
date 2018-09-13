@@ -13,6 +13,11 @@ public class Principal {
         return (10 + Math.abs(w)) / 6;
     }
 
+    public static int formula1(int w) {
+        int valor = (3*w + 10) / 8;
+        return Math.min(valor, 5);
+    }
+    
     /**
      * Executa a comparação de duas Strings
      *
@@ -23,6 +28,7 @@ public class Principal {
     public static double comparadorXY(String ref1, String ref2) {
         //Cria o tokenizador de String com o separador por espaços em branco
         Tokenizer tokenizador1 = Tokenizers.whitespace();
+        
         //Gera um List dos grams da String 1
         List<String> refs1 = tokenizador1.tokenizeToList(ref1);
 
@@ -61,10 +67,6 @@ public class Principal {
      * @return String de Grams
      */
     public static String geraGram(String ref) {
-        //Substitui não palavras por espaços em branco 
-        Simplifier simplificador1 = Simplifiers.replaceNonWord(" ");
-        ref = simplificador1.simplify(ref);
-
         //Converte a String para minusculo
         Simplifier simplificador2 = Simplifiers.toLowerCase();
         ref = simplificador2.simplify(ref);
@@ -73,10 +75,10 @@ public class Principal {
         Tokenizer tokenizador1 = Tokenizers.whitespace();
         //Gera um List dos grams da String
         List<String> refs1 = tokenizador1.tokenizeToList(ref);
-
+        
         //String de retorno dos grams
         String rgrams = "";
-        for (String a : refs1) {
+        for (String a : refs1) {            
             ///Tokens com 2 ou mais letras
             if (a.length() > 1) {
                 //System.out.println("\ntoken = " + a );
@@ -85,8 +87,7 @@ public class Principal {
                 List<String> refs2 = tokenizador2.tokenizeToList(a);
                 //System.out.print("      gram["+ngram+"]=");
                 for (String b : refs2) {
-                    //System.out.print(b+",");
-                    rgrams = rgrams + " " + b;
+                        rgrams = rgrams + " " + b;
                 }
             }
         }
@@ -102,22 +103,28 @@ public class Principal {
      * @return
      */
     public static float jaccard(String str1, String str2, int ngram) {
+        //Converte a String para minusculo
+        Simplifier simplificador2 = Simplifiers.toLowerCase();
+        str1 = simplificador2.simplify(str1);
+        str2 = simplificador2.simplify(str2);
+        
+        
         StringMetric metric
-                = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
-                        .tokenize(Tokenizers.qGram(ngram))
-                        .build();
-
+                = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())                        
+                        .tokenize(Tokenizers.whitespace())                        
+                        .tokenize(Tokenizers.qGram(ngram))                        
+                        .build();        
         return metric.compare(str1, str2);
     }
-
+    
     /**
      * Programa principal.
      *
      * @param args
      */
     public static void main(String[] args) {
-//        String ref1 = "H. Wang, X. He, M.-W. Chang, Y. Song, R. W. White, and W. Chu. Personalized ranking model adaptation for web search. In Proceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval, pages 323-332, 2013.";
-//        String ref2 = "H. Wang, et.al. Personalized ranking model adaptation for web search. In Proc. Intl. SIGIR; pg. 323 a 332, 20113.";
+        String ref1 = "H. Wang, X. He, M.-W. Chang, Y. Song, R. W. White, and W. Chu. Personalized ranking model adaptation for web search. In Proceedings of the 36th international ACM SIGIR conference on Research and development in information retrieval, pages 323-332, 2013.";
+        String ref2 = "H. Wang, et.al. Personalized ranking model adaptation for web search. In Proc. Intl. SIGIR; pg. 323 a 332, 20113.";
 
 //        String ref1 = "xx xy yxy";
 //        String ref2 = "xy xx zz yy";
@@ -128,8 +135,8 @@ public class Principal {
 //        String ref1 = "Maria gosta de ouvir música";
 //        String ref2 = "Pedro gosta de tocar música";
 
-        String ref1 = "Maria Eduarda";
-        String ref2 = "Eduarda Maria";
+//        String ref1 = "Maria Eduarda";
+//        String ref2 = "Eduarda Maria";
 
         System.out.println(">>> Strings originais");
         System.out.println("Antes ref1 =" + ref1);
