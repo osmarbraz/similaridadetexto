@@ -1,26 +1,7 @@
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import static com.google.common.base.Predicates.in;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import org.simmetrics.StringDistance;
 import org.simmetrics.StringMetric;
-import org.simmetrics.builders.StringDistanceBuilder;
-import org.simmetrics.builders.StringMetricBuilder;
-import org.simmetrics.metrics.CosineSimilarity;
-import org.simmetrics.metrics.EuclideanDistance;
 import org.simmetrics.metrics.GeneralizedJaccard;
-import org.simmetrics.metrics.Jaccard;
-import org.simmetrics.metrics.Levenshtein;
-import org.simmetrics.metrics.StringDistances;
-import org.simmetrics.metrics.StringMetrics;
 import org.simmetrics.simplifiers.Simplifier;
 import org.simmetrics.simplifiers.Simplifiers;
 import org.simmetrics.tokenizers.Tokenizer;
