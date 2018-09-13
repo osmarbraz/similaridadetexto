@@ -34,7 +34,7 @@ import com.google.common.collect.Multiset;
  * <code>
  * similarity(a,b) = 1 - distance(a,b) / (∣a∣ + ∣b∣)
  * <br>
- * distance(a,b) = ∣∣a - b∣∣�?
+ * distance(a,b) = a - b
  * </code>
  * <p>
  * This class is immutable and thread-safe.
