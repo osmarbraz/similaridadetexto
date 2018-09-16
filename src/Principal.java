@@ -180,8 +180,6 @@ public class Principal {
         System.out.println("ngram=3 Padrão = " + jaccardPadrao(ref1, ref2, 3) + "\t Modificado = " + jaccardModificado(ref1, ref2, 3));
         System.out.println("ngram=4 Padrão = " + jaccardPadrao(ref1, ref2, 4) + "\t Modificado = " + jaccardModificado(ref1, ref2, 4));
         System.out.println("ngram=5 Padrão = " + jaccardPadrao(ref1, ref2, 5) + "\t Modificado = " + jaccardModificado(ref1, ref2, 5));
-        System.out.println("ngram=6 Padrão = " + jaccardPadrao(ref1, ref2, 6) + "\t Modificado = " + jaccardModificado(ref1, ref2, 6));
-        System.out.println("ngram=7 Padrão = " + jaccardPadrao(ref1, ref2, 7) + "\t Modificado = " + jaccardModificado(ref1, ref2, 7));
         
         System.out.println("\nTestes com SimilaridadeAO:");       
         System.out.println("Sem pre-processamento = " + similaridadeAO(ref1, ref2));
