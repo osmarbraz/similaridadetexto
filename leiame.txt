@@ -1,0 +1,3 @@
+Usa a biblioteca Simmetrics 4.1.1 disponível em https://github.com/Simmetrics/simmetrics.
+Lib simmetric apresenta erro de compilação nos testes.
+Para gerar o jar da biblioteca simmetric-core-4.1.1 remove o pacote test dos fontes.
