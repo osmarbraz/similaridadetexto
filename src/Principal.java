@@ -9,23 +9,24 @@ import org.simmetrics.tokenizers.Tokenizers;
 
 public class Principal {
 
+    /**
+     * Calcula o tamanho do gram considerando o tamanho da palavra.
+     * 
+     * @param w Tamanho de uma palavra.
+     * @return o tamanho do gram a ser considerado para uma palavra de tamanho w.
+     */
     public static int formula(int w) {
         return (10 + w) / 6;
     }
-
-    public static int formula1(int w) {
-        int valor = (3*w + 10) / 8;
-        return Math.min(valor, 5);
-    }
     
     /**
-     * Executa a comparação de duas Strings
+     * Executa a comparação de duas Strings.
      *
-     * @param ref1 String 1 a ser comparada
-     * @param ref2 String 2 a ser comparada
-     * @return O percentual de semelhança das Strings
+     * @param ref1 String 1 a ser comparada.
+     * @param ref2 String 2 a ser comparada.
+     * @return O percentual de semelhança das Strings.
      */
-    public static double comparadorXY(String ref1, String ref2) {
+    public static double similaridadeAO(String ref1, String ref2) {       
         //Cria o tokenizador de String com o separador por espaços em branco
         Tokenizer tokenizador1 = Tokenizers.whitespace();
         
@@ -61,10 +62,10 @@ public class Principal {
     }
 
     /**
-     * Gera uma String de grams apartir de uma String
+     * Gera uma String de grams apartir de uma String.
      *
-     * @param ref String a ser gerada os grams
-     * @return String de Grams
+     * @param ref String a ser gerada os grams.
+     * @return String de Grams.
      */
     public static String geraGram(String ref) {
         //Converte a String para minusculo
@@ -96,52 +97,53 @@ public class Principal {
                 }
             }
         }
+        //Remove os espaços em branco das extremidade
+        rgrams = rgrams.trim();
         return rgrams;
     }
 
     /**
-     * Compara as Strings com o método de Jaccard padrão sem pre processamento
+     * Compara as Strings com o método de Jaccard padrão sem pre processamento.
      *
-     * @param str1 String 1 a ser comparada
-     * @param str2 String 2 a ser comparada
-     * @param ngram Tamanho dos grams a ser gerado
+     * @param ref1 String 1 a ser comparada.
+     * @param ref2 String 2 a ser comparada.
+     * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccard(String str1, String str2, int ngram) {
+    public static float jaccardModificado(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
         Simplifier simplificador2 = Simplifiers.toLowerCase();
-        str1 = simplificador2.simplify(str1);
-        str2 = simplificador2.simplify(str2);
+        ref1 = simplificador2.simplify(ref1);
+        ref2 = simplificador2.simplify(ref2);
 
         //Remove não palavras
         simplificador2 = Simplifiers.replaceNonWord(" ");
-        str1 = simplificador2.simplify(str1);
-        str2 = simplificador2.simplify(str2);
+        ref1 = simplificador2.simplify(ref1);
+        ref2 = simplificador2.simplify(ref2);
        
         StringMetric metric
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())                        
                         .tokenize(Tokenizers.whitespace())                        
                         .tokenize(Tokenizers.qGram(ngram))                        
                         .build();        
-        return metric.compare(str1, str2);
+        return metric.compare(ref1, ref2);
     }
-    
-    
+        
     /**
-     * Compara as Strings com o método de Jaccard padrão sem pre processamento
+     * Compara as Strings com o método de Jaccard padrão sem pre processamento.
      *
-     * @param str1 String 1 a ser comparada
-     * @param str2 String 2 a ser comparada
-     * @param ngram Tamanho dos grams a ser gerado
+     * @param ref1 String 1 a ser comparada.
+     * @param ref2 String 2 a ser comparada.
+     * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccardPadrao(String str1, String str2, int ngram) {        
+    public static float jaccardPadrao(String ref1, String ref2, int ngram) {        
         StringMetric metric
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())                        
                         .tokenize(Tokenizers.whitespace())                        
                         .tokenize(Tokenizers.qGram(ngram))                        
                         .build();        
-        return metric.compare(str1, str2);
+        return metric.compare(ref1, ref2);
     }
     
     /**
@@ -165,25 +167,25 @@ public class Principal {
 //        String ref1 = "Maria Eduarda";
 //        String ref2 = "Eduarda Maria";
 
-        System.out.println(">>> Strings originais");
-        System.out.println("Antes ref1 =" + ref1);
-        System.out.println("Antes ref2 =" + ref2);
-
-        System.out.println("\nJaccard:");
-        System.out.println("ngram=2 Padrão =" + jaccardPadrao(ref1, ref2, 2) + "\t Modificado = " + jaccard(ref1, ref2, 2));
-        System.out.println("ngram=3 Padrão =" + jaccardPadrao(ref1, ref2, 3) + "\t Modificado = " + jaccard(ref1, ref2, 3));
-        System.out.println("ngram=4 Padrão =" + jaccardPadrao(ref1, ref2, 4) + "\t Modificado = " + jaccard(ref1, ref2, 4));
-        System.out.println("ngram=5 Padrão =" + jaccardPadrao(ref1, ref2, 5) + "\t Modificado = " + jaccard(ref1, ref2, 5));
-        System.out.println("ngram=6 Padrão =" + jaccardPadrao(ref1, ref2, 6) + "\t Modificado = " + jaccard(ref1, ref2, 6));
-        System.out.println("ngram=7 Padrão =" + jaccardPadrao(ref1, ref2, 7) + "\t Modificado = " + jaccard(ref1, ref2, 7));
+        System.out.println(">>> Strings originais:");
+        System.out.println("Antes ref1 = " + ref1);
+        System.out.println("Antes ref2 = " + ref2);
+        System.out.println(">>> Strings pré-processadas:");
+        System.out.println("Depois ref1p = " + geraGram(ref1));
+        System.out.println("Depois ref2p = " + geraGram(ref2));
         
-        System.out.println("\nNovo cálculo:");
-        String x1 = geraGram(ref1);
-        String x2 = geraGram(ref2);
 
-        System.out.println("Depois ref1 =" + x1);
-        System.out.println("Depois ref2 =" + x2);
-
-        System.out.println("\nResultado da comparação =" + comparadorXY(x1, x2));
+        System.out.println("\nTestes com Jaccard:");
+        System.out.println("ngram=2 Padrão = " + jaccardPadrao(ref1, ref2, 2) + "\t Modificado = " + jaccardModificado(ref1, ref2, 2));
+        System.out.println("ngram=3 Padrão = " + jaccardPadrao(ref1, ref2, 3) + "\t Modificado = " + jaccardModificado(ref1, ref2, 3));
+        System.out.println("ngram=4 Padrão = " + jaccardPadrao(ref1, ref2, 4) + "\t Modificado = " + jaccardModificado(ref1, ref2, 4));
+        System.out.println("ngram=5 Padrão = " + jaccardPadrao(ref1, ref2, 5) + "\t Modificado = " + jaccardModificado(ref1, ref2, 5));
+        System.out.println("ngram=6 Padrão = " + jaccardPadrao(ref1, ref2, 6) + "\t Modificado = " + jaccardModificado(ref1, ref2, 6));
+        System.out.println("ngram=7 Padrão = " + jaccardPadrao(ref1, ref2, 7) + "\t Modificado = " + jaccardModificado(ref1, ref2, 7));
+        
+        System.out.println("\nTestes com SimilaridadeAO:");       
+        System.out.println("Sem pre-processamento = " + similaridadeAO(ref1, ref2));
+        System.out.println("Com pre-processamento = " + similaridadeAO(geraGram(ref1), geraGram(ref2)));
+        
     }
 }
