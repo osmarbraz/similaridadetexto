@@ -24,8 +24,7 @@ public class Principal {
      * Calcula o tamanho do gram considerando o tamanho da palavra.
      *
      * @param w Tamanho de uma palavra.
-     * @return o tamanho do gram a ser considerado para uma palavra de tamanho
-     * w.
+     * @return O tamanho do gram considerando w.
      */
     public static int formula(int w) {
         return (10 + w) / 6;
@@ -218,8 +217,8 @@ public class Principal {
     /**
      * Imprime na tela os dados da lista.
      *
-     * @param lista Lista a ser impressa.
-     * @param metodo Método a ser analisado.
+     * @param lista Lista a ser exibida.
+     * @param metodo Método a ser  utilizado na analise.
      */
     public static void imprime(ArrayList<Palavra> lista, String correta, int metodo) {
         for (int i = 0; i < 10; i++) {
