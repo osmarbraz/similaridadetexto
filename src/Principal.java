@@ -29,7 +29,6 @@ public class Principal {
      * w.
      */
     public static int formula(int w) {
-        //return (10 + w) / 6;
         return (10 + w) / 6;
     }
 
@@ -41,42 +40,39 @@ public class Principal {
      * @return O percentual de semelhança das Strings.
      */
     public static double similaridadeAO(String ref1, String ref2) {
-        //Cria o tokenizador de String com o separador por espaços em branco
-        Tokenizer tokenizador1 = Tokenizers.whitespace();
-
-        //Gera um List dos grams da String 1
-        List<String> refs1 = tokenizador1.tokenizeToList(ref1);
-
-        //Cria o tokenizador de String com o separador por espaços em branco
-        Tokenizer tokenizador2 = Tokenizers.whitespace();
-        //Gera um List dos grams da String 1
-        List<String> refs2 = tokenizador2.tokenizeToList(ref2);
-
-        //Acumula a quantidade de Strings semelhantes entre as Listas
-        int comum = 0;
-        //Acumula a quantidade de Strings difeentes entre as Listas
-        int diferencaA = 0;
-        //Faz a comparação das Strings da lista 1 com a lista 2
-        for (String a : refs1) {
-            if (refs2.contains(a)) {
-                comum = comum + 1;
-            } else {
-                diferencaA = diferencaA + 1;
+        if (diferencaAbsoluta(ref1, ref2) > 0.5) {
+            //Cria o tokenizador de String com o separador por espaços em branco
+            Tokenizer tokenizador1 = Tokenizers.whitespace();
+            //Gera um List dos grams da String 1
+            List<String> refs1 = tokenizador1.tokenizeToList(ref1);
+            //Cria o tokenizador de String com o separador por espaços em branco
+            Tokenizer tokenizador2 = Tokenizers.whitespace();
+            //Gera um List dos grams da String 1
+            List<String> refs2 = tokenizador2.tokenizeToList(ref2);
+            //Acumula a quantidade de Strings semelhantes entre as Listas
+            int comum = 0;
+            //Acumula a quantidade de Strings difeentes entre as Listas
+            int diferencaA = 0;
+            //Faz a comparação das Strings da lista 1 com a lista 2
+            for (String a : refs1) {
+                if (refs2.contains(a)) {
+                    comum = comum + 1;
+                } else {
+                    diferencaA = diferencaA + 1;
+                }
             }
+            //Calcula a diferença para a lista b
+            int diferencaB = Math.abs(refs2.size() - comum);
+            //Calcula o total de elementos distintos
+            double total = comum + diferencaA + diferencaB;
+            //Calcula o percentual de semelhança das listas
+            double medida = comum / total;
+            medida = medida * diferencaAbsoluta(ref1, ref2);
+            //Retorna o percentual
+            return medida;
+        } else {
+            return 0;
         }
-
-        //Calcula a diferença para a lista b
-        int diferencaB = Math.abs(refs2.size() - comum);
-
-        //Calcula o total de elementos distintos
-        double total = comum + diferencaA + diferencaB;
-
-        //Calcula o percentual de semelhança das listas
-        double medida = comum / total;
-
-        medida = medida * diferencaAbsoluta(ref1, ref2);
-        //Retorna o percentual
-        return medida;
     }
 
     /**
@@ -279,7 +275,7 @@ public class Principal {
         BufferedReader reader = new BufferedReader(input);
         String palavra = reader.readLine();
 
-        //Leitura palavras da base de teste(corretas + incorretas)
+        //Leitura palavras corretas do dicionário
         while (palavra != null) {
 
             //Verifica se é uma palavra correta
@@ -291,12 +287,14 @@ public class Principal {
                 //Leitura das palavras digitadas incorretamente
                 palavra = reader.readLine().toLowerCase();
 
-                ////Leitura palavras da base de teste somente incorretas
+                //Leitura  das palavras incorretas.
                 while ((palavra != null) && (palavra.charAt(0) != '$')) {
 
                     //verifica o tamanho da palavra
                     int sub = correta.length() - palavra.length();
                     double x = Math.abs(sub) / (double) palavra.length();
+
+                    //50% de diferença não testa
                     if (x < 0.5) {
                         //Saída em tela
                         if (imprimir == false) {
@@ -317,13 +315,14 @@ public class Principal {
                         //Leitura da primeira palavra do dicionario em english
                         String palavraDicionario = reader1.readLine();
 
-                        //Leitura palavras corretas do dicionário
+                        //Leitura palavras corretas
                         while (palavraDicionario != null) {
+                            //System.out.println("Lendo dicionario");
 
-                            //Gera o gram da palavra a ser analisada
+                            //Gera o gram da palavra
                             String xgram = geraGram(palavra, 0);
 
-                            //Executa os testes de similaridades com a palavra incorreta e o dicionário
+                            //Executa as similaridades                            
                             double resultado = similaridadeAO(xgram, geraGram(palavraDicionario, ultima));
                             melhoresX.add(new Palavra(palavra, palavraDicionario, resultado, ultima));
 
@@ -339,7 +338,7 @@ public class Principal {
                             resultado = jaccardModificado(palavra, palavraDicionario, 4);
                             melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
 
-                            //Leitura próxima palavra do dicionario correto
+                            //Leitura próxima palavra do dicionario
                             palavraDicionario = reader1.readLine();
                         }
 
@@ -350,7 +349,6 @@ public class Principal {
                         Collections.sort(melhores3);
                         Collections.sort(melhores4);
 
-                        //Controla a saída em tela ou arquivo
                         if (imprimir == false) {
                             imprime(melhoresX, correta, 0);
                             imprime(melhores1, correta, 1);
@@ -358,8 +356,8 @@ public class Principal {
                             imprime(melhores3, correta, 3);
                             imprime(melhores4, correta, 4);
                         } else {
-                            out.println(correta 
-                                    + ";" + palavra
+                            out.println(correta + ";" + palavra
+                                    //O primeiro de cada lista
                                     + ";" + (posicaoMelhor(correta, melhoresX) + 1)
                                     + ";" + (posicaoMelhor(correta, melhores1) + 1)
                                     + ";" + (posicaoMelhor(correta, melhores2) + 1)
@@ -371,16 +369,14 @@ public class Principal {
                                     + ";" + melhores3.get(0).getPalavraErrada()
                                     + ";" + melhores4.get(0).getPalavraErrada());
                         }
-                        
                     }// if tamanho palavra
-                    //Leitura da próxima palavra da base de teste
                     palavra = reader.readLine();
-                }//while ////Leitura palavras da base de teste somente incorretas
+                }//while palavras incorretas
             }//if $
             //Envia buffer para o arquivo
             if (imprimir) {
                 out.flush();
             }
-        }//while Leitura palavras da base de teste(corretas + incorretas)
+        }//while dicionario        
     }
 }
