@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.GeneralizedJaccard;
@@ -38,7 +41,8 @@ public class Principal {
      * @return O percentual de semelhança das Strings.
      */
     public static double similaridadeAO(String ref1, String ref2) {
-        if (diferencaAbsoluta(ref1, ref2) > 0.5) {
+        double diferencaAbsoluta = diferencaAbsoluta(ref1, ref2);
+        if (diferencaAbsoluta > 0.6) {
             //Cria o tokenizador de String com o separador por espaços em branco
             Tokenizer tokenizador1 = Tokenizers.whitespace();
             //Gera um List dos grams da String 1
@@ -65,7 +69,7 @@ public class Principal {
             double total = comum + diferencaA + diferencaB;
             //Calcula o percentual de semelhança das listas
             double medida = comum / total;
-            medida = medida * diferencaAbsoluta(ref1, ref2);
+            medida = medida * diferencaAbsoluta;
             //Retorna o percentual
             return medida;
         } else {
@@ -192,8 +196,9 @@ public class Principal {
             soma = soma + Math.abs(vref1[i] - vref2[i]);
         }
         //Calcula a média da diferença pelo tamanho médio.
-        double media = soma / ((double) (ref1.length() + ref2.length()) / 2.0);
-        return 1 - media;
+        double parcial = soma / ((double) ((ref1.length() + ref2.length())/2.0));
+
+        return 1 - parcial;
     }
 
     /**
@@ -239,6 +244,34 @@ public class Principal {
         return dateFormat.format(date);
     }
 
+    public static List carregarDicionario() {
+        //Define a lista de String do dicionário
+        List<String> lista = new ArrayList<>(194433);        
+        try {
+            //Procura a palavra digitada errada no dicionario
+            java.io.Reader input1 = new FileReader("dicionario_en.txt");
+            BufferedReader reader1 = new BufferedReader(input1);
+
+            //Leitura da primeira palavra do dicionario em english
+            String palavraDicionario = reader1.readLine();
+            
+            //Leitura palavras corretas
+            while (palavraDicionario != null) {
+                //Adiciona a String a lista
+                lista.add(palavraDicionario);
+                
+                //Leitura próxima palavra do dicionario
+                palavraDicionario = reader1.readLine();                
+            }            
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lista;
+    }
+    
     /**
      * Programa principal.
      *
@@ -269,8 +302,12 @@ public class Principal {
         BufferedReader reader = new BufferedReader(input);
         String palavra = reader.readLine();
 
+        List<String> dicionario = carregarDicionario();
+        
         //Leitura palavras corretas do dicionário
         while (palavra != null) {
+            
+//            System.out.println("1111111111111111analisando palavra = " + palavra);
 
             //Verifica se é uma palavra correta
             if (palavra.charAt(0) == '$') {
@@ -283,13 +320,14 @@ public class Principal {
 
                 //Leitura  das palavras incorretas.
                 while ((palavra != null) && (palavra.charAt(0) != '$')) {
+//                    System.out.println("2222222analisando palavra = " + palavra);
 
                     //verifica o tamanho da palavra
                     int sub = correta.length() - palavra.length();
                     double x = Math.abs(sub) / (double) palavra.length();
 
-                    //50% de diferença não testa
-                    if (x < 0.5) {
+                    //50% de diferença não testa                    
+                    if (x < 0.5) {                        
                         //Saída em tela
                         if (imprimir == false) {
                             System.out.println("correta = " + correta + "(" + correta.length() + ") / analisada =" + palavra + "(" + palavra.length() + ")\n SAO=" + similaridadeAO(geraGram(correta, 0), geraGram(palavra, 0)) + " / difAbs=" + diferencaAbsoluta(correta, palavra) + "\n");
@@ -303,18 +341,23 @@ public class Principal {
                         ArrayList<Palavra> melhores4 = new ArrayList();
 
                         //Procura a palavra digitada errada no dicionario
-                        java.io.Reader input1 = new FileReader("dicionario_en.txt");
-                        BufferedReader reader1 = new BufferedReader(input1);
+                        //java.io.Reader input1 = new FileReader("dicionario_en.txt");
+                        //BufferedReader reader1 = new BufferedReader(input1);
 
                         //Leitura da primeira palavra do dicionario em english
-                        String palavraDicionario = reader1.readLine();
+                        //String palavraDicionario = reader1.readLine();
 
+                         //System.out.println("Lendo dicionario para a palavra = " + palavra);
+                        
                         //Leitura palavras corretas
-                        while (palavraDicionario != null) {
-                            //System.out.println("Lendo dicionario");
-
-                            //Gera o gram da palavra
-                            String xgram = geraGram(palavra, 0);
+                        //while (palavraDicionario != null) {
+                        
+                        //Gera o gram da palavra
+                        String xgram = geraGram(palavra, 0);
+                        
+                        for(int i=0;i<dicionario.size();i++){
+                            //Recupera a palavra do dicionário
+                            String palavraDicionario = dicionario.get(i);
 
                             //Executa as similaridades                            
                             double resultado = similaridadeAO(xgram, geraGram(palavraDicionario, ultima));
@@ -333,8 +376,9 @@ public class Principal {
                             melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
 
                             //Leitura próxima palavra do dicionario
-                            palavraDicionario = reader1.readLine();
+                            //palavraDicionario = reader1.readLine();
                         }
+//                        System.out.println("Lendo dicionario");
 
                         //Ordena as listas dos resultados
                         Collections.sort(melhoresX);
