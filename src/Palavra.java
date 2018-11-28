@@ -1,4 +1,7 @@
 
+/**
+ * Classe usada para armazenar o resultado da comparação das palavras e o seu resultado.
+ */
 public class Palavra implements Comparable {
 
     private String palavra;
@@ -6,6 +9,14 @@ public class Palavra implements Comparable {
     private double resultado;
     private int gram;
 
+    /**
+     * Construtor com parâmetros.
+     *
+     * @param palavra Palavra correta.
+     * @param palavraErrada Palavra a ser comparada.
+     * @param resultado Resultado a verificação.
+     * @param gram Tamanho do gram utilizado na comparação.
+     */
     public Palavra(String palavra, String palavraErrada, double resultado, int gram) {
         this.palavra = palavra;
         this.palavraErrada = palavraErrada;
@@ -13,6 +24,7 @@ public class Palavra implements Comparable {
         this.gram = gram;
     }
 
+    // gets´s e set´s
     public String getPalavra() {
         return palavra;
     }
@@ -28,7 +40,7 @@ public class Palavra implements Comparable {
     public void setPalavraErrada(String palavraErrada) {
         this.palavraErrada = palavraErrada;
     }
-        
+
     public double getResultado() {
         return resultado;
     }
@@ -45,8 +57,16 @@ public class Palavra implements Comparable {
         this.gram = gram;
     }
 
-    
-    
+    /**
+     * Metodo que compara os resultados.
+     *
+     * Utilizado para ordenar a lista.
+     *
+     * @param o Objeto de comparação.
+     *
+     * @return Se é menor, maior ou igual.
+     */
+    @Override
     public int compareTo(Object o) {
         Palavra pa = (Palavra) o;
         if (this.resultado < pa.resultado) {

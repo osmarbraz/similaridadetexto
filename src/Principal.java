@@ -28,7 +28,6 @@ public class Principal {
      * w.
      */
     public static int formula(int w) {
-        //return (10 + w) / 6;
         return (10 + w) / 6;
     }
 
@@ -40,20 +39,15 @@ public class Principal {
      * @return O percentual de semelhança das Strings.
      */
     public static double similaridadeAO(String ref1, String ref2) {
-
         if (diferencaAbsoluta(ref1, ref2) > 0.5) {
-
             //Cria o tokenizador de String com o separador por espaços em branco
             Tokenizer tokenizador1 = Tokenizers.whitespace();
-
             //Gera um List dos grams da String 1
             List<String> refs1 = tokenizador1.tokenizeToList(ref1);
-
             //Cria o tokenizador de String com o separador por espaços em branco
             Tokenizer tokenizador2 = Tokenizers.whitespace();
             //Gera um List dos grams da String 1
             List<String> refs2 = tokenizador2.tokenizeToList(ref2);
-
             //Acumula a quantidade de Strings semelhantes entre as Listas
             int comum = 0;
             //Acumula a quantidade de Strings difeentes entre as Listas
@@ -66,23 +60,18 @@ public class Principal {
                     diferencaA = diferencaA + 1;
                 }
             }
-
             //Calcula a diferença para a lista b
             int diferencaB = Math.abs(refs2.size() - comum);
-
             //Calcula o total de elementos distintos
             double total = comum + diferencaA + diferencaB;
-
             //Calcula o percentual de semelhança das listas
             double medida = comum / total;
-
             medida = medida * diferencaAbsoluta(ref1, ref2);
             //Retorna o percentual
             return medida;
         } else {
             return 0;
         }
-
     }
 
     /**
