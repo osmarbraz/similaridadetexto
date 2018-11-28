@@ -226,20 +226,21 @@ public class Principal {
      * Imprime na tela os dados da lista.
      *
      * @param lista Lista a ser exibida.
+     * @param palavraCorreta String da palavra correta.
      * @param metodo Método a ser utilizado na analise.
      */
-    public static void imprime(ArrayList<Palavra> lista, String correta, int metodo) {
+    public static void imprime(ArrayList<Palavra> lista, String palavraCorreta, int metodo) {
         for (int i = 0; i < 10; i++) {
             System.out.println(" top(" + (i + 1) + ") gram(" + metodo + ")= " + lista.get(i).getPalavraErrada() + " = " + lista.get(i).getResultado());
         }
-        System.out.println("  > " + correta + " na posição = " + (posicaoMelhor(correta, lista) + 1));
+        System.out.println("  > " + palavraCorreta + " na posição = " + (posicaoMelhor(palavraCorreta, lista) + 1));
         System.out.println("");
     }
 
     /**
      * Retorna a data e hora concatenados.
      *
-     * @return String com data e hora concatenado.
+     * @return String com data e hora concatenados.
      */
     private static String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
@@ -250,19 +251,19 @@ public class Principal {
     public static List carregarDicionario() throws FileNotFoundException, IOException {
         //Define a lista de String do dicionário
         List<String> lista = new ArrayList<>(194433);
-        //Procura a palavra digitada errada no dicionario
-        java.io.Reader input1 = new FileReader("dicionario_en.txt");
-        BufferedReader reader1 = new BufferedReader(input1);
-        //Leitura da primeira palavra do dicionário em english
-        String palavraDicionario = reader1.readLine();
-
+        //Abre o arquivo do dicionário
+        java.io.Reader input = new FileReader("dicionario_en.txt");
+        //Instancia o leitor do arquivo do dicionário
+        BufferedReader reader = new BufferedReader(input);
+        //Leitura da primeira palavra do dicionário em inglês
+        String palavraDicionario = reader.readLine();
         //Leitura palavras corretas
         while (palavraDicionario != null) {
             //Adiciona a String a lista
             lista.add(palavraDicionario);
 
             //Leitura próxima palavra do dicionário
-            palavraDicionario = reader1.readLine();
+            palavraDicionario = reader.readLine();
         }
         //Retorna a lista com o dicionário de palavras
         return lista;
@@ -274,9 +275,7 @@ public class Principal {
      * @param args
      */
     public static void main(String[] args) throws IOException {
-        // Base de dados
-        // https://www.dcs.bbk.ac.uk/~ROGER/corpora.html
-
+        
         //Controla a saída dos dados
         boolean imprimir = true;
 
@@ -293,11 +292,16 @@ public class Principal {
             System.out.println(">>>> Gerando saída em tela ");
         }
 
+        
+        // Base de dados de teste
+        // https://www.dcs.bbk.ac.uk/~ROGER/corpora.html
+
         //Abre o arquivo a base de testes
         java.io.Reader input = new FileReader("base_teste_en.txt");
         BufferedReader reader = new BufferedReader(input);
         String palavra = reader.readLine();
 
+        //Carrega o dicionário para uma lista
         List<String> dicionario = carregarDicionario();
 
         //Leitura palavras corretas do dicionário
