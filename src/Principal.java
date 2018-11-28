@@ -134,14 +134,14 @@ public class Principal {
      */
     public static float jaccardModificado(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
-        Simplifier simplificador2 = Simplifiers.toLowerCase();
-        ref1 = simplificador2.simplify(ref1);
-        ref2 = simplificador2.simplify(ref2);
+        Simplifier simplificador = Simplifiers.toLowerCase();
+        ref1 = simplificador.simplify(ref1);
+        ref2 = simplificador.simplify(ref2);
 
         //Remove não palavras
-        simplificador2 = Simplifiers.replaceNonWord(" ");
-        ref1 = simplificador2.simplify(ref1);
-        ref2 = simplificador2.simplify(ref2);
+        simplificador = Simplifiers.replaceNonWord(" ");
+        ref1 = simplificador.simplify(ref1);
+        ref2 = simplificador.simplify(ref2);
 
         StringMetric metric
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
@@ -160,43 +160,39 @@ public class Principal {
      * @return
      */
     public static float jaccardPadrao(String ref1, String ref2, int ngram) {
-        StringMetric metric
+        StringMetric metrica
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
                         .tokenize(Tokenizers.whitespace())
                         .tokenize(Tokenizers.qGram(ngram))
                         .build();
-        return metric.compare(ref1, ref2);
+        return metrica.compare(ref1, ref2);
     }
 
     /**
-     * Suponha as strings x=arara e y=araxá. Declare uma matriz de 256 posições
-     * tipo inteiro para cada string. Para cada caractere, incremente a posição
-     * correspondente ao seu char code. Após processar as duas strings, calcule
-     * a diferença absoluta (módulo) de cada índice, some os resultados e divida
-     * pela média de tamanho das das strings. No caso: arara: a=3 r=2 (TODAS as
-     * outras posições valerão 0! araxá: a=2 r=1 x=1 á=1 Similaridade:
-     * (|3-2|+|2-1|+|0-1|+|0-1|)/((5+5)/2)= 4/5=0.8
+     * Calcula a diferença absoluta entre palavras.
      *
-     * @param ref1
-     * @param ref2
-     * @return
+     * @param ref1 Palavra 1
+     * @param ref2 Palavra 2
+     * @return Diferença absoluta entre as letras das palavras.
      */
     public static double diferencaAbsoluta(String ref1, String ref2) {
+        //Calcula o número de ocorrências de cada letra da palavra 1
         int[] vref1 = new int[256];
         for (int i = 0; i < ref1.length(); i++) {
             vref1[ref1.charAt(i)]++;
         }
 
+        //Calcula o número de ocorrências de cada letra da palavra 2
         int[] vref2 = new int[256];
         for (int i = 0; i < ref2.length(); i++) {
             vref2[ref2.charAt(i)]++;
         }
-
+        //Realiza soma a diferença em módulo de cada letra das palavras
         int soma = 0;
         for (int i = 0; i < 256; i++) {
             soma = soma + Math.abs(vref1[i] - vref2[i]);
         }
-
+        //Calcula a média da diferença pelo tamanho médio.
         double media = soma / ((double) (ref1.length() + ref2.length()) / 2.0);
         return 1 - media;
     }
