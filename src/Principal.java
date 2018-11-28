@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.GeneralizedJaccard;
@@ -25,8 +28,7 @@ public class Principal {
      * Calcula o tamanho do gram considerando o tamanho da palavra.
      *
      * @param w Tamanho de uma palavra.
-     * @return o tamanho do gram a ser considerado para uma palavra de tamanho
-     * w.
+     * @return O tamanho do gram considerando w.
      */
     public static int formula(int w) {
         return (10 + w) / 6;
@@ -40,7 +42,10 @@ public class Principal {
      * @return O percentual de semelhança das Strings.
      */
     public static double similaridadeAO(String ref1, String ref2) {
-        if (diferencaAbsoluta(ref1, ref2) > 0.5) {
+        //Guarda da diferença absoluta
+        double diferencaAbsoluta = diferencaAbsoluta(ref1, ref2);
+        //Verifica a diferença absoluta
+        if (diferencaAbsoluta > 0.6) {
             //Cria o tokenizador de String com o separador por espaços em branco
             Tokenizer tokenizador1 = Tokenizers.whitespace();
             //Gera um List dos grams da String 1
@@ -67,7 +72,7 @@ public class Principal {
             double total = comum + diferencaA + diferencaB;
             //Calcula o percentual de semelhança das listas
             double medida = comum / total;
-            medida = medida * diferencaAbsoluta(ref1, ref2);
+            medida = medida * diferencaAbsoluta;
             //Retorna o percentual
             return medida;
         } else {
@@ -135,14 +140,14 @@ public class Principal {
      */
     public static float jaccardModificado(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
-        Simplifier simplificador2 = Simplifiers.toLowerCase();
-        ref1 = simplificador2.simplify(ref1);
-        ref2 = simplificador2.simplify(ref2);
+        Simplifier simplificador = Simplifiers.toLowerCase();
+        ref1 = simplificador.simplify(ref1);
+        ref2 = simplificador.simplify(ref2);
 
         //Remove não palavras
-        simplificador2 = Simplifiers.replaceNonWord(" ");
-        ref1 = simplificador2.simplify(ref1);
-        ref2 = simplificador2.simplify(ref2);
+        simplificador = Simplifiers.replaceNonWord(" ");
+        ref1 = simplificador.simplify(ref1);
+        ref2 = simplificador.simplify(ref2);
 
         StringMetric metric
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
@@ -161,45 +166,42 @@ public class Principal {
      * @return
      */
     public static float jaccardPadrao(String ref1, String ref2, int ngram) {
-        StringMetric metric
+        StringMetric metrica
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
                         .tokenize(Tokenizers.whitespace())
                         .tokenize(Tokenizers.qGram(ngram))
                         .build();
-        return metric.compare(ref1, ref2);
+        return metrica.compare(ref1, ref2);
     }
 
     /**
-     * Suponha as strings x=arara e y=araxá. Declare uma matriz de 256 posições
-     * tipo inteiro para cada string. Para cada caractere, incremente a posição
-     * correspondente ao seu char code. Após processar as duas strings, calcule
-     * a diferença absoluta (módulo) de cada índice, some os resultados e divida
-     * pela média de tamanho das das strings. No caso: arara: a=3 r=2 (TODAS as
-     * outras posições valerão 0! araxá: a=2 r=1 x=1 á=1 Similaridade:
-     * (|3-2|+|2-1|+|0-1|+|0-1|)/((5+5)/2)= 4/5=0.8
+     * Calcula a diferença absoluta entre palavras.
      *
-     * @param ref1
-     * @param ref2
-     * @return
+     * @param ref1 Palavra 1
+     * @param ref2 Palavra 2
+     * @return Diferença absoluta entre as letras das palavras.
      */
     public static double diferencaAbsoluta(String ref1, String ref2) {
+        //Calcula o número de ocorrências de cada letra da palavra 1
         int[] vref1 = new int[256];
         for (int i = 0; i < ref1.length(); i++) {
             vref1[ref1.charAt(i)]++;
         }
 
+        //Calcula o número de ocorrências de cada letra da palavra 2
         int[] vref2 = new int[256];
         for (int i = 0; i < ref2.length(); i++) {
             vref2[ref2.charAt(i)]++;
         }
-
+        //Realiza soma a diferença em módulo de cada letra das palavras
         int soma = 0;
         for (int i = 0; i < 256; i++) {
             soma = soma + Math.abs(vref1[i] - vref2[i]);
         }
+        //Calcula a média da diferença pelo tamanho médio.
+        double parcial = soma / ((double) ((ref1.length() + ref2.length()) / 2.0));
 
-        double media = soma / ((double) (ref1.length() + ref2.length()) / 2.0);
-        return 1 - media;
+        return 1 - parcial;
     }
 
     /**
@@ -223,8 +225,8 @@ public class Principal {
     /**
      * Imprime na tela os dados da lista.
      *
-     * @param lista Lista a ser impressa.
-     * @param metodo Método a ser analisado.
+     * @param lista Lista a ser exibida.
+     * @param metodo Método a ser utilizado na analise.
      */
     public static void imprime(ArrayList<Palavra> lista, String correta, int metodo) {
         for (int i = 0; i < 10; i++) {
@@ -243,6 +245,27 @@ public class Principal {
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public static List carregarDicionario() throws FileNotFoundException, IOException {
+        //Define a lista de String do dicionário
+        List<String> lista = new ArrayList<>(194433);
+        //Procura a palavra digitada errada no dicionario
+        java.io.Reader input1 = new FileReader("dicionario_en.txt");
+        BufferedReader reader1 = new BufferedReader(input1);
+        //Leitura da primeira palavra do dicionário em english
+        String palavraDicionario = reader1.readLine();
+
+        //Leitura palavras corretas
+        while (palavraDicionario != null) {
+            //Adiciona a String a lista
+            lista.add(palavraDicionario);
+
+            //Leitura próxima palavra do dicionário
+            palavraDicionario = reader1.readLine();
+        }
+        //Retorna a lista com o dicionário de palavras
+        return lista;
     }
 
     /**
@@ -270,10 +293,12 @@ public class Principal {
             System.out.println(">>>> Gerando saída em tela ");
         }
 
-        //Abre o arquivo do dicionário
+        //Abre o arquivo a base de testes
         java.io.Reader input = new FileReader("base_teste_en.txt");
         BufferedReader reader = new BufferedReader(input);
         String palavra = reader.readLine();
+
+        List<String> dicionario = carregarDicionario();
 
         //Leitura palavras corretas do dicionário
         while (palavra != null) {
@@ -294,7 +319,7 @@ public class Principal {
                     int sub = correta.length() - palavra.length();
                     double x = Math.abs(sub) / (double) palavra.length();
 
-                    //50% de diferença não testa
+                    //50% de diferença não testa                    
                     if (x < 0.5) {
                         //Saída em tela
                         if (imprimir == false) {
@@ -307,20 +332,14 @@ public class Principal {
                         ArrayList<Palavra> melhores2 = new ArrayList();
                         ArrayList<Palavra> melhores3 = new ArrayList();
                         ArrayList<Palavra> melhores4 = new ArrayList();
+                        
+                        //Gera o gram da palavra
+                        String xgram = geraGram(palavra, 0);
 
-                        //Procura a palavra digitada errada no dicionario
-                        java.io.Reader input1 = new FileReader("dicionario_en.txt");
-                        BufferedReader reader1 = new BufferedReader(input1);
-
-                        //Leitura da primeira palavra do dicionario em english
-                        String palavraDicionario = reader1.readLine();
-
-                        //Leitura palavras corretas
-                        while (palavraDicionario != null) {
-                            //System.out.println("Lendo dicionario");
-
-                            //Gera o gram da palavra
-                            String xgram = geraGram(palavra, 0);
+                        //Percorre a lista de palavras do dicionário
+                        for (int i = 0; i < dicionario.size(); i++) {
+                            //Recupera a palavra do dicionário
+                            String palavraDicionario = dicionario.get(i);
 
                             //Executa as similaridades                            
                             double resultado = similaridadeAO(xgram, geraGram(palavraDicionario, ultima));
@@ -337,9 +356,6 @@ public class Principal {
 
                             resultado = jaccardModificado(palavra, palavraDicionario, 4);
                             melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
-
-                            //Leitura próxima palavra do dicionario
-                            palavraDicionario = reader1.readLine();
                         }
 
                         //Ordena as listas dos resultados
