@@ -357,10 +357,10 @@ public class Principal {
             if (palavra.charAt(0) == '$') {
 
                 //Retira o $ do início da palavra
-                String correta = palavra.substring(1, palavra.length()).toLowerCase();
+                String correta = palavra.substring(1, palavra.length());
 
                 //Leitura das palavras digitadas incorretamente
-                palavra = reader.readLine().toLowerCase();
+                palavra = reader.readLine();
 
                 //Leitura  das palavras incorretas.
                 while ((palavra != null) && (palavra.charAt(0) != '$')) {
