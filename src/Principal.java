@@ -150,7 +150,7 @@ public class Principal {
      * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccardModificado(String ref1, String ref2, int ngram) {
+    public static float jaccardModificad1(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
         Simplifier simplificador = Simplifiers.toLowerCase();
         ref1 = simplificador.simplify(ref1);
@@ -392,16 +392,16 @@ public class Principal {
                             double resultado = similaridadeAO(palavra, palavraDicionario);
                             melhoresX.add(new Palavra(palavra, palavraDicionario, resultado, ultima));
 
-                            resultado = jaccardModificado(palavra, palavraDicionario, 1);
+                            resultado = jaccardPadrao(palavra, palavraDicionario, 1);
                             melhores1.add(new Palavra(palavra, palavraDicionario, resultado, 1));
 
-                            resultado = jaccardModificado(palavra, palavraDicionario, 2);
+                            resultado = jaccardPadrao(palavra, palavraDicionario, 2);
                             melhores2.add(new Palavra(palavra, palavraDicionario, resultado, 2));
 
-                            resultado = jaccardModificado(palavra, palavraDicionario, 3);
+                            resultado = jaccardPadrao(palavra, palavraDicionario, 3);
                             melhores3.add(new Palavra(palavra, palavraDicionario, resultado, 3));
 
-                            resultado = jaccardModificado(palavra, palavraDicionario, 4);
+                            resultado = jaccardPadrao(palavra, palavraDicionario, 4);
                             melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
                         }
 
