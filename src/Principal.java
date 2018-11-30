@@ -362,7 +362,7 @@ public class Principal {
                 //Leitura das palavras digitadas incorretamente
                 palavra = reader.readLine();
 
-                //Leitura  das palavras incorretas.
+                //Leitura  das palavras incorretas do dataset
                 while ((palavra != null) && (palavra.charAt(0) != '$')) {
 
                     //verifica o tamanho da palavra
