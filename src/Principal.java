@@ -350,7 +350,7 @@ public class Principal {
         //Carrega o dicionário para uma lista
         List<String> dicionario = carregarDicionario();
 
-        //Leitura palavras corretas do dicionário
+        //Leitura da palavra correta do dataset
         while (palavra != null) {
 
             //Verifica se é uma palavra correta
