@@ -32,18 +32,19 @@ public class Principal {
      */
     public static int formula(int w) {
         //return (10 + w) / 6;
+        // 1-5
         if (w < 6) {
             return 1;
         }
-
-        if (w < 10) {
+        // 6-10
+        if (w < 11) {
             return 2;
         }
-
+        // 11-15
         if (w < 16) {
             return 3;
         }
-
+        // > 15
         return 4;
     }
 
