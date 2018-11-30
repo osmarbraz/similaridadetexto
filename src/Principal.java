@@ -31,7 +31,20 @@ public class Principal {
      * @return O tamanho do gram considerando w.
      */
     public static int formula(int w) {
-        return (10 + w) / 6;
+        //return (10 + w) / 6;
+        if (w < 6) {
+            return 1;
+        }
+
+        if (w < 10) {
+            return 2;
+        }
+
+        if (w < 16) {
+            return 3;
+        }
+
+        return 4;
     }
 
     /**
@@ -312,8 +325,6 @@ public class Principal {
     public static void main(String[] args) throws IOException {
 
 //        System.out.println("Media =" + mediaTamanhoDicionario());
-        
-        
         //Controla a saída dos dados
         boolean imprimir = true;
 
