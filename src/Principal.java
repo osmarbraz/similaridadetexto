@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.GeneralizedJaccard;
