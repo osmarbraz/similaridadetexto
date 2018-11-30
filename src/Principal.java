@@ -31,7 +31,24 @@ public class Principal {
      * @return O tamanho do gram considerando w.
      */
     public static int formula(int w) {
-        return (10 + w) / 6;
+        
+        // 1-5
+        if (w<6) {
+            return 1;
+        } 
+        
+        // 6-10
+        if (w<11) {
+            return 2;
+        }
+        
+        // 11-15
+        if (w<16) {
+            return 3;           
+        }
+        
+        // > 15
+        return 4;
     }
 
     /**
