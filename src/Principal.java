@@ -150,7 +150,7 @@ public class Principal {
      * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccardModificad1(String ref1, String ref2, int ngram) {
+    public static float jaccardModificado(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
         Simplifier simplificador = Simplifiers.toLowerCase();
         ref1 = simplificador.simplify(ref1);
@@ -177,7 +177,7 @@ public class Principal {
      * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccardPadrao(String ref1, String ref2, int ngram) {
+    public static float jaccardPadrao1(String ref1, String ref2, int ngram) {
         StringMetric metrica
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
                         .tokenize(Tokenizers.whitespace())
@@ -227,7 +227,7 @@ public class Principal {
     public static int posicaoMelhor(String correta, ArrayList<Palavra> lista) {
         int melhor = -1;
         for (int i = 0; i < lista.size(); i++) {
-            if (correta.equals(lista.get(i).getPalavraErrada())) {
+            if (correta.equalsIgnoreCase(lista.get(i).getPalavraErrada())) {
                 return i;
             }
         }
@@ -382,26 +382,27 @@ public class Principal {
                         ArrayList<Palavra> melhores2 = new ArrayList();
                         ArrayList<Palavra> melhores3 = new ArrayList();
                         ArrayList<Palavra> melhores4 = new ArrayList();
-
+//                        System.out.println("palavra=" + palavra);
                         //Percorre a lista de palavras do dicionário
                         for (int i = 0; i < dicionario.size(); i++) {
                             //Recupera a palavra do dicionário
                             String palavraDicionario = dicionario.get(i);
-
+//                                System.out.println("palavraDicionario="+palavraDicionario);
+                                        
                             //Executa as similaridades                            
                             double resultado = similaridadeAO(palavra, palavraDicionario);
                             melhoresX.add(new Palavra(palavra, palavraDicionario, resultado, ultima));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 1);
+                            resultado = jaccardModificado(palavra, palavraDicionario, 1);
                             melhores1.add(new Palavra(palavra, palavraDicionario, resultado, 1));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 2);
+                            resultado = jaccardModificado(palavra, palavraDicionario, 2);
                             melhores2.add(new Palavra(palavra, palavraDicionario, resultado, 2));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 3);
+                            resultado = jaccardModificado(palavra, palavraDicionario, 3);
                             melhores3.add(new Palavra(palavra, palavraDicionario, resultado, 3));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 4);
+                            resultado = jaccardModificado(palavra, palavraDicionario, 4);
                             melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
                         }
 
