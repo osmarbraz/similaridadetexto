@@ -29,7 +29,7 @@ public class Principal {
      * @return O tamanho do gram considerando w.
      */
     public static int formula(int w) {
-        //return (10 + w) / 6;
+        // return (10 + w) / 6;
         // 1-5
         if (w < 6) {
             return 1;
@@ -102,8 +102,6 @@ public class Principal {
      * @param ref String a ser gerada os grams.
      * @return String de Grams.
      */
-    static int ultima;
-
     public static String geraGram(String ref, int xgram) {
         //Converte a String para minúsculo
         Simplifier simplificador = Simplifiers.toLowerCase();
@@ -126,7 +124,6 @@ public class Principal {
                 int ngram = 0;
                 if (xgram == 0) {
                     ngram = formula(a.length());
-                    ultima = ngram;
                 } else {
                     ngram = xgram;
                 }
@@ -150,7 +147,7 @@ public class Principal {
      * @param ngram Tamanho dos grams a ser gerado.
      * @return
      */
-    public static float jaccardModificad1(String ref1, String ref2, int ngram) {
+    public static float jaccardPadrao1(String ref1, String ref2, int ngram) {
         //Converte a String para minusculo
         Simplifier simplificador = Simplifiers.toLowerCase();
         ref1 = simplificador.simplify(ref1);
@@ -323,7 +320,8 @@ public class Principal {
      */
     public static void main(String[] args) throws IOException {
 
-//        System.out.println("Media =" + mediaTamanhoDicionario());
+        //System.out.println("Media =" + mediaTamanhoDicionario());
+        //Media =8.813334156238911
         //Controla a saída dos dados
         boolean imprimir = true;
 
@@ -360,20 +358,20 @@ public class Principal {
                 String correta = palavra.substring(1, palavra.length());
 
                 //Leitura das palavras digitadas incorretamente
-                palavra = reader.readLine();
+                String palavraErrada = reader.readLine();
 
                 //Leitura  das palavras incorretas do dataset
-                while ((palavra != null) && (palavra.charAt(0) != '$')) {
+                while ((palavraErrada != null) && (palavraErrada.charAt(0) != '$')) {
 
-                    //verifica o tamanho da palavra
-                    int sub = correta.length() - palavra.length();
-                    double x = Math.abs(sub) / (double) palavra.length();
+                    //verifica o tamanho da palavra errada com a palavra correta
+                    int sub = correta.length() - palavraErrada.length();
+                    double x = Math.abs(sub) / (double) palavraErrada.length();
 
                     //50% de diferença não testa                    
                     if (x < 0.5) {
                         //Saída em tela
                         if (imprimir == false) {
-                            System.out.println("correta = " + correta + "(" + correta.length() + ") / analisada =" + palavra + "(" + palavra.length() + ")\n SAO=" + similaridadeAO(geraGram(correta, 0), geraGram(palavra, 0)) + " / difAbs=" + diferencaAbsoluta(correta, palavra) + "\n");
+                            System.out.println("correta = " + correta + "(" + correta.length() + ") / analisada =" + palavraErrada + "(" + palavraErrada.length() + ")\n SAO=" + similaridadeAO(geraGram(correta, 0), geraGram(palavraErrada, 0)) + " / difAbs=" + diferencaAbsoluta(correta, palavraErrada) + "\n");
                         }
 
                         //Listas para armazenar os resultados da comparação
@@ -382,28 +380,27 @@ public class Principal {
                         ArrayList<Palavra> melhores2 = new ArrayList();
                         ArrayList<Palavra> melhores3 = new ArrayList();
                         ArrayList<Palavra> melhores4 = new ArrayList();
-//                        System.out.println("palavra=" + palavra);
+
                         //Percorre a lista de palavras do dicionário
                         for (int i = 0; i < dicionario.size(); i++) {
                             //Recupera a palavra do dicionário
                             String palavraDicionario = dicionario.get(i);
-//                                System.out.println("palavraDicionario="+palavraDicionario);
-                                        
+
                             //Executa as similaridades                            
-                            double resultado = similaridadeAO(palavra, palavraDicionario);
-                            melhoresX.add(new Palavra(palavra, palavraDicionario, resultado, ultima));
+                            double resultado = similaridadeAO(palavraErrada, palavraDicionario);
+                            melhoresX.add(new Palavra(palavraErrada, palavraDicionario, resultado, 0));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 1);
-                            melhores1.add(new Palavra(palavra, palavraDicionario, resultado, 1));
+                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 1);
+                            melhores1.add(new Palavra(palavraErrada, palavraDicionario, resultado, 1));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 2);
-                            melhores2.add(new Palavra(palavra, palavraDicionario, resultado, 2));
+                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 2);
+                            melhores2.add(new Palavra(palavraErrada, palavraDicionario, resultado, 2));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 3);
-                            melhores3.add(new Palavra(palavra, palavraDicionario, resultado, 3));
+                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 3);
+                            melhores3.add(new Palavra(palavraErrada, palavraDicionario, resultado, 3));
 
-                            resultado = jaccardPadrao(palavra, palavraDicionario, 4);
-                            melhores4.add(new Palavra(palavra, palavraDicionario, resultado, 4));
+                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 4);
+                            melhores4.add(new Palavra(palavraErrada, palavraDicionario, resultado, 4));
                         }
 
                         //Ordena as listas dos resultados
@@ -420,7 +417,7 @@ public class Principal {
                             imprime(melhores3, correta, 3);
                             imprime(melhores4, correta, 4);
                         } else {
-                            out.println(correta + ";" + palavra
+                            out.println(correta + ";" + palavraErrada
                                     //O primeiro de cada lista
                                     + ";" + (posicaoMelhor(correta, melhoresX) + 1)
                                     + ";" + (posicaoMelhor(correta, melhores1) + 1)
@@ -434,8 +431,10 @@ public class Principal {
                                     + ";" + melhores4.get(0).getPalavraErrada());
                         }
                     }// if tamanho palavra
-                    palavra = reader.readLine();
+                    palavraErrada = reader.readLine();
+                    palavra = palavraErrada;
                 }//while palavras incorretas
+
             }//if $
             //Envia buffer para o arquivo
             if (imprimir) {
