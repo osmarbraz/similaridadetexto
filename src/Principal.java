@@ -23,149 +23,101 @@ import org.simmetrics.tokenizers.Tokenizers;
 public class Principal {
 
     /**
-     * Calcula o tamanho do gram considerando o tamanho da palavra.
+     * It returns a gram size to be adopted. The values were calculated based on
+     * the media of the English word (8) with a standard deviation of 2 between
+     * grams
      *
-     * @param w Tamanho de uma palavra.
-     * @return O tamanho do gram considerando w.
+     * @param wordLength word's length.
+     * @return The gram's size to be adopted by the word w.
      */
-    public static int formula(int w) {
-        // return (10 + w) / 6;
-        // 1-5
-        if (w < 6) {
+    public static int getGramSize(int wordLength) {
+        //return (10 + w) / 6;
+        // [1-5]
+        if (wordLength < 6) {
             return 1;
         }
-        // 6-10
-        if (w < 11) {
+        // [6-10]
+        if (wordLength < 11) {
             return 2;
         }
-        // 11-15
-        if (w < 16) {
+        // [11-15]
+        if (wordLength < 16) {
             return 3;
         }
-        // > 15
+        // [15+]
         return 4;
     }
 
     /**
-     * Executa a comparação de duas Strings.
+     * It calculates the similarity grade between two given strings.
      *
-     * @param ref1 String 1 a ser comparada.
-     * @param ref2 String 2 a ser comparada.
-     * @return O percentual de semelhança das Strings.
+     * @param wrongWord
+     * @param dictionaryWord
+     * @return It is the grade of similarity between both words.
+     *
+     * public static double similaridadeAO(String wrongWord, String
+     * dictionaryWord) {
+     *
+     * Double absoluteDifference = absoluteDifference(wrongWord,
+     * dictionaryWord);
+     *
+     * if (absoluteDifference > 0.6) {
+     *
+     * String xgram1 = generatesGram(wrongWord, 0);
+     *
+     * String xgram2 = generatesGram(dictionaryWord, 0);
+     *
+     * Tokenizer tokenizador1 = Tokenizers.whitespace();
+     *
+     * List<String> refs1 = tokenizador1.tokenizeToList(xgram1);
+     *
+     * Tokenizer tokenizador2 = Tokenizers.whitespace();
+     *
+     * List<String> refs2 = tokenizador2.tokenizeToList(xgram2);
+     *
+     * int comum = 0;
+     *
+     * int diferencaA = 0;
+     *
+     * for (String a : refs1) { if (refs2.contains(a)) { comum = comum + 1; }
+     * else { diferencaA = diferencaA + 1; } }
+     *
+     * int diferencaB = Math.abs(refs2.size() - comum);
+     *
+     * double total = comum + diferencaA + diferencaB;
+     *
+     * double medida = comum / total; medida = medida * absoluteDifference;
+     *
+     * return medida; } else { return 0; } }
      */
-    public static double similaridadeAO(String ref1, String ref2) {
-        //Guarda da diferença absoluta
-        double diferencaAbsoluta = diferencaAbsoluta(ref1, ref2);
-        //Verifica a diferença absoluta
-        if (diferencaAbsoluta > 0.6) {
-            //Gera o gram da palavra1
-            String xgram1 = geraGram(ref1, 0);
-            //Gera o gram da palavra2
-            String xgram2 = geraGram(ref2, 0);
-            //Cria o tokenizador de String com o separador por espaços em branco
-            Tokenizer tokenizador1 = Tokenizers.whitespace();
-            //Gera um List dos grams da String 1
-            List<String> refs1 = tokenizador1.tokenizeToList(xgram1);
-            //Cria o tokenizador de String com o separador por espaços em branco
-            Tokenizer tokenizador2 = Tokenizers.whitespace();
-            //Gera um List dos grams da String 1
-            List<String> refs2 = tokenizador2.tokenizeToList(xgram2);
-            //Acumula a quantidade de Strings semelhantes entre as Listas
-            int comum = 0;
-            //Acumula a quantidade de Strings difeentes entre as Listas
-            int diferencaA = 0;
-            //Faz a comparação das Strings da lista 1 com a lista 2
-            for (String a : refs1) {
-                if (refs2.contains(a)) {
-                    comum = comum + 1;
-                } else {
-                    diferencaA = diferencaA + 1;
-                }
-            }
-            //Calcula a diferença para a lista b
-            int diferencaB = Math.abs(refs2.size() - comum);
-            //Calcula o total de elementos distintos
-            double total = comum + diferencaA + diferencaB;
-            //Calcula o percentual de semelhança das listas
-            double medida = comum / total;
-            medida = medida * diferencaAbsoluta;
-            //Retorna o percentual
-            return medida;
-        } else {
-            return 0;
-        }
-    }
-
     /**
      * Gera uma String de grams apartir de uma String.
      *
      * @param ref String a ser gerada os grams.
      * @return String de Grams.
-     */
-    public static String geraGram(String ref, int xgram) {
-        //Converte a String para minúsculo
-        Simplifier simplificador = Simplifiers.toLowerCase();
-        ref = simplificador.simplify(ref);
-
-        //Remove as não palavras
-        simplificador = Simplifiers.removeNonWord("");
-
-        //Cria o tokenizador de String com o separador por espaços em branco
-        Tokenizer tokenizador1 = Tokenizers.whitespace();
-        //Gera um List dos grams da String
-        List<String> refs1 = tokenizador1.tokenizeToList(ref);
-
-        //String de retorno dos grams
-        String rgrams = "";
-        for (String a : refs1) {
-            a = simplificador.simplify(a);
-            ///Tokens com 2 ou mais letras
-            if (a.length() > 1) {
-                int ngram = 0;
-                if (xgram == 0) {
-                    ngram = formula(a.length());
-                } else {
-                    ngram = xgram;
-                }
-                Tokenizer tokenizador2 = Tokenizers.qGram(ngram);
-                List<String> refs2 = tokenizador2.tokenizeToList(a);
-                for (String b : refs2) {
-                    rgrams = rgrams + " " + b;
-                }
-            }
-        }
-        //Remove os espaços em branco das extremidade
-        rgrams = rgrams.trim();
-        return rgrams;
-    }
-
-    /**
-     * Compara as Strings com o método de Jaccard padrão sem pre processamento.
      *
-     * @param ref1 String 1 a ser comparada.
-     * @param ref2 String 2 a ser comparada.
-     * @param ngram Tamanho dos grams a ser gerado.
-     * @return
+     * static int ultima;
+     *
+     * public static String generatesGram(String ref, int xgram) {
+     *
+     * Simplifier simplificador = Simplifiers.toLowerCase();
+     *
+     * ref = simplificador.simplify(ref);
+     *
+     * simplificador = Simplifiers.removeNonWord(""); //Cria o tokenizador de
+     * Strings com o separador por espacos em branco Tokenizer tokenizador1 =
+     * Tokenizers.whitespace(); //Gera um List dos grams da String List<String>
+     * refs1 = tokenizador1.tokenizeToList(ref);
+     *
+     * //String de retorno dos grams String rgrams = ""; for (String a : refs1)
+     * { a = simplificador.simplify(a); ///Tokens com 2 ou mais letras if
+     * (a.length() > 1) { int ngram = 0; if (xgram == 0) { ngram =
+     * getGramSize(a.length()); ultima = ngram; } else { ngram = xgram; }
+     * Tokenizer tokenizador2 = Tokenizers.qGram(ngram); List<String> refs2 =
+     * tokenizador2.tokenizeToList(a); for (String b : refs2) { rgrams = rgrams
+     * + " " + b; } } } //Remove os espacos em branco das extremidades rgrams =
+     * rgrams.trim(); return rgrams; }
      */
-    public static float jaccardPadrao1(String ref1, String ref2, int ngram) {
-        //Converte a String para minusculo
-        Simplifier simplificador = Simplifiers.toLowerCase();
-        ref1 = simplificador.simplify(ref1);
-        ref2 = simplificador.simplify(ref2);
-
-        //Remove não palavras
-        simplificador = Simplifiers.replaceNonWord(" ");
-        ref1 = simplificador.simplify(ref1);
-        ref2 = simplificador.simplify(ref2);
-
-        StringMetric metric
-                = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
-                        .tokenize(Tokenizers.whitespace())
-                        .tokenize(Tokenizers.qGram(ngram))
-                        .build();
-        return metric.compare(ref1, ref2);
-    }
-
     /**
      * Compara as Strings com o método de Jaccard padrão sem pre processamento.
      *
@@ -184,14 +136,18 @@ public class Principal {
     }
 
     /**
-     * Calcula a diferença absoluta entre palavras.
+     * It is the percentual difference of letters between the compared words.
      *
      * @param ref1 Palavra 1
      * @param ref2 Palavra 2
      * @return Diferença absoluta entre as letras das palavras.
      */
-    public static double diferencaAbsoluta(String ref1, String ref2) {
-        //Calcula o número de ocorrências de cada letra da palavra 1
+    public static double absoluteDifference(String ref1, String ref2) {
+        //Calcula qtd ocorrencias de cada letra da palavra 1
+
+        ref1 = ref1.toLowerCase();
+        ref2 = ref2.toLowerCase();
+
         int[] vref1 = new int[256];
         for (int i = 0; i < ref1.length(); i++) {
             vref1[ref1.charAt(i)]++;
@@ -234,22 +190,23 @@ public class Principal {
     /**
      * Imprime na tela os dados da lista.
      *
-     * @param lista Lista a ser exibida.
-     * @param palavraCorreta String da palavra correta.
-     * @param metodo Método a ser utilizado na analise.
+     * @param list Lista a ser exibida.
+     * @param rightWord String da palavra correta.
+     * @param method Método a ser utilizado na analise.
      */
-    public static void imprime(ArrayList<Palavra> lista, String palavraCorreta, int metodo) {
+    public static void imprime(ArrayList<Palavra> list, String rightWord, int method) {
         for (int i = 0; i < 10; i++) {
-            System.out.println(" top(" + (i + 1) + ") gram(" + metodo + ")= " + lista.get(i).getPalavraErrada() + " = " + lista.get(i).getResultado());
+            System.out.println(" top(" + (i + 1) + ") gram(" + method + ")= " + list.get(i).getPalavraErrada() + " = " + list.get(i).getResultado());
         }
-        System.out.println("  > " + palavraCorreta + " na posição = " + (posicaoMelhor(palavraCorreta, lista) + 1));
+        System.out.println("  > " + rightWord + " na posição = " + (posicaoMelhor(rightWord, list) + 1));
         System.out.println("");
     }
 
     /**
-     * Retorna a data e hora concatenados.
+     * Datetime formated.
      *
-     * @return String com data e hora concatenados.
+     * @return String with date and time in a specific format to be used in the
+     * output filename.
      */
     private static String getDateTime() {
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
@@ -258,149 +215,137 @@ public class Principal {
     }
 
     /**
-     * Carrega o dicionári para a memória.
+     * Loads of dictionary word in the memory to accelerate the test execution
      *
      * @return
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static List carregarDicionario() throws FileNotFoundException, IOException {
-        //Define a lista de String do dicionário
+    public static List<String> carregarDicionario() throws FileNotFoundException, IOException {
+        //Define a lista de String do dicionario
         List<String> lista = new ArrayList<>(194433);
-        //Abre o arquivo do dicionário
         java.io.Reader input = new FileReader("dicionario_en.txt");
-        //Instancia o leitor do arquivo do dicionário
         BufferedReader reader = new BufferedReader(input);
-        //Leitura da primeira palavra do dicionário em inglês
         String palavraDicionario = reader.readLine();
-        //Leitura palavras corretas
         while (palavraDicionario != null) {
-            //Adiciona a String a lista
             lista.add(palavraDicionario);
-            //Leitura próxima palavra do dicionário
             palavraDicionario = reader.readLine();
         }
-        //Retorna a lista com o dicionário de palavras
         return lista;
     }
 
-    public static double mediaTamanhoDicionario() {
-        double soma = 0;
-        int conta = 0;
-        //Define a lista de String do dicionário
-        List<String> lista = new ArrayList<>(194433);
-        //Abre o arquivo do dicionário
-        java.io.Reader input;
-        try {
-            input = new FileReader("dicionario_en.txt");
-            //Instancia o leitor do arquivo do dicionário
-            BufferedReader reader = new BufferedReader(input);
-            //Leitura da primeira palavra do dicionário em inglês
-            String palavraDicionario = reader.readLine();
-            //Leitura palavras corretas
-            while (palavraDicionario != null) {
-                //Soma o tamanho da palavras
-                soma = soma + palavraDicionario.length();
-                //Conta a quantidade de palavras
-                conta = conta + 1;
-                //Leitura próxima palavra do dicionário
-                palavraDicionario = reader.readLine();
-            }
-        } catch (FileNotFoundException ex) {
-        } catch (IOException ex) {
-        }
-        //Retorna a lista com o dicionário de palavras
-        return soma / conta;
+    /**
+     * The method is used to calculate the relative difference of length between
+     * two words.
+     *
+     */
+    private static double lengthDifference(String rightWord, String word) {
+        return Math.abs(rightWord.length() - word.length()) / (double) rightWord.length();
     }
 
     /**
-     * Programa principal.
+     * Main method.
      *
      * @param args
      */
     public static void main(String[] args) throws IOException {
-
-        //System.out.println("Media =" + mediaTamanhoDicionario());
-        //Media =8.813334156238911
-        //Controla a saída dos dados
+        // ----------------------------------------------------------------------------------------------------
+        // SET PRINT METHOD
+        // ----------------------------------------------------------------------------------------------------
         boolean imprimir = true;
 
         PrintWriter out = null;
         if (imprimir) {
             String arquivo = "saida_" + getDateTime() + ".csv";
             out = new PrintWriter(new FileWriter(arquivo));
-            System.out.println(">>>> Gerando saída no arquivo " + arquivo);
+            System.out.println(">>>> Gerando saida no arquivo " + arquivo);
 
-            //Cabeçalho do arquivo            
+            //HEADER OF THE OUTPUT FILE
             out.println("palavra correta;palavra digitada;px;p1;p2;p3;p4;p1_lx;p1_l1;p1_l2;p1_l3;p1_l4");
             out.flush();
         } else {
-            System.out.println(">>>> Gerando saída em tela ");
+            System.out.println(">>>> OUTPUT ON THE SCREEN");
         }
 
-        // Base de dados de teste
-        // https://www.dcs.bbk.ac.uk/~ROGER/corpora.html
-        //Abre o arquivo a base de testes
+        // ----------------------------------------------------------------------------------------------------
+        // Dataset downloaded at https://www.dcs.bbk.ac.uk/~ROGER/corpora.html
+        // ---------------------------------------------------------------------------------------------------- 
         java.io.Reader input = new FileReader("base_teste_en.txt");
         BufferedReader reader = new BufferedReader(input);
-        String palavra = reader.readLine();
+        String word = reader.readLine();
 
-        //Carrega o dicionário para uma lista
-        List<String> dicionario = carregarDicionario();
+        List<String> dictionary = carregarDicionario();
 
-        //Leitura da palavra correta do dataset
-        while (palavra != null) {
+        while (word != null) {
 
-            //Verifica se é uma palavra correta
-            if (palavra.charAt(0) == '$') {
+            // If it is a target word
+            if (word.charAt(0) == '$') {
 
-                //Retira o $ do início da palavra
-                String correta = palavra.substring(1, palavra.length());
+                String rightWord = word.substring(1, word.length());
 
-                //Leitura das palavras digitadas incorretamente
-                String palavraErrada = reader.readLine();
+                word = reader.readLine();
 
-                //Leitura  das palavras incorretas do dataset
-                while ((palavraErrada != null) && (palavraErrada.charAt(0) != '$')) {
+                // While there is a wrong word
+                while ((word != null) && (word.charAt(0) != '$')) {
 
-                    //verifica o tamanho da palavra errada com a palavra correta
-                    int sub = correta.length() - palavraErrada.length();
-                    double x = Math.abs(sub) / (double) palavraErrada.length();
+                    // If two words are much different, so the combination wouldn't be tested.
+                    if (lengthDifference(rightWord, word) < 0.5) {
 
-                    //50% de diferença não testa                    
-                    if (x < 0.5) {
-                        //Saída em tela
                         if (imprimir == false) {
-                            System.out.println("correta = " + correta + "(" + correta.length() + ") / analisada =" + palavraErrada + "(" + palavraErrada.length() + ")\n SAO=" + similaridadeAO(geraGram(correta, 0), geraGram(palavraErrada, 0)) + " / difAbs=" + diferencaAbsoluta(correta, palavraErrada) + "\n");
+                            System.out.println("correta = " + rightWord + "(" + rightWord.length() + ") / analisada =" + word + "(" + word.length() + ") / difAbs=" + absoluteDifference(rightWord, word) + "\n");
                         }
 
-                        //Listas para armazenar os resultados da comparação
-                        ArrayList<Palavra> melhoresX = new ArrayList();
-                        ArrayList<Palavra> melhores1 = new ArrayList();
-                        ArrayList<Palavra> melhores2 = new ArrayList();
-                        ArrayList<Palavra> melhores3 = new ArrayList();
-                        ArrayList<Palavra> melhores4 = new ArrayList();
+                        //Used as a similarity ranking for each method
+                        ArrayList<Palavra> melhores1 = new ArrayList<Palavra>();
+                        ArrayList<Palavra> melhores2 = new ArrayList<Palavra>();
+                        ArrayList<Palavra> melhores3 = new ArrayList<Palavra>();
+                        ArrayList<Palavra> melhores4 = new ArrayList<Palavra>();
+                        ArrayList<Palavra> melhoresX = new ArrayList<Palavra>();
 
-                        //Percorre a lista de palavras do dicionário
-                        for (int i = 0; i < dicionario.size(); i++) {
-                            //Recupera a palavra do dicionário
-                            String palavraDicionario = dicionario.get(i);
+                        for (int i = 0; i < dictionary.size(); i++) {
 
-                            //Executa as similaridades                            
-                            double resultado = similaridadeAO(palavraErrada, palavraDicionario);
-                            melhoresX.add(new Palavra(palavraErrada, palavraDicionario, resultado, 0));
+                            String palavraDicionario = dictionary.get(i);
 
-                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 1);
-                            melhores1.add(new Palavra(palavraErrada, palavraDicionario, resultado, 1));
+                            // Below, the calculation of similarities between the wrong word and the current dictionary word
+                            double resultado1 = jaccardPadrao(word, palavraDicionario, 1);
+                            melhores1.add(new Palavra(word, palavraDicionario, resultado1, 1));
 
-                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 2);
-                            melhores2.add(new Palavra(palavraErrada, palavraDicionario, resultado, 2));
+                            double resultado2 = jaccardPadrao(word, palavraDicionario, 2);
+                            melhores2.add(new Palavra(word, palavraDicionario, resultado2, 2));
 
-                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 3);
-                            melhores3.add(new Palavra(palavraErrada, palavraDicionario, resultado, 3));
+                            double resultado3 = jaccardPadrao(word, palavraDicionario, 3);
+                            melhores3.add(new Palavra(word, palavraDicionario, resultado3, 3));
 
-                            resultado = jaccardPadrao(palavraErrada, palavraDicionario, 4);
-                            melhores4.add(new Palavra(palavraErrada, palavraDicionario, resultado, 4));
+                            double resultado4 = jaccardPadrao(word, palavraDicionario, 4);
+                            melhores4.add(new Palavra(word, palavraDicionario, resultado4, 4));
+
+                            // --------------------------------------------------------------------------
+                            // X-GRAM Execution
+                            // --------------------------------------------------------------------------
+                            Double absoluteDifference = absoluteDifference(word, palavraDicionario);
+                            int gramSize = getGramSize(word.length());
+
+                            if (absoluteDifference > 0.6) {
+                                switch (gramSize) {
+                                    case 1:
+                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado1 * absoluteDifference, 1));
+                                        break;
+                                    case 2:
+                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado2 * absoluteDifference, 2));
+                                        break;
+                                    case 3:
+                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado3 * absoluteDifference, 3));
+                                        break;
+                                    case 4:
+                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado4 * absoluteDifference, 4));
+                                        break;
+                                }
+                            } else {
+                                melhoresX.add(new Palavra(word, palavraDicionario, 0, gramSize));
+                            }
+
+                            //System.out.println("WORD " + word + " DICTIONARY " + palavraDicionario + " GRAM: " + gramSize + " AD: " + absoluteDifference);
+                            // --------------------------------------------------------------------------
                         }
 
                         //Ordena as listas dos resultados
@@ -411,19 +356,19 @@ public class Principal {
                         Collections.sort(melhores4);
 
                         if (imprimir == false) {
-                            imprime(melhoresX, correta, 0);
-                            imprime(melhores1, correta, 1);
-                            imprime(melhores2, correta, 2);
-                            imprime(melhores3, correta, 3);
-                            imprime(melhores4, correta, 4);
+                            imprime(melhoresX, rightWord, 0);
+                            imprime(melhores1, rightWord, 1);
+                            imprime(melhores2, rightWord, 2);
+                            imprime(melhores3, rightWord, 3);
+                            imprime(melhores4, rightWord, 4);
                         } else {
-                            out.println(correta + ";" + palavraErrada
+                            out.println(rightWord + ";" + word
                                     //O primeiro de cada lista
-                                    + ";" + (posicaoMelhor(correta, melhoresX) + 1)
-                                    + ";" + (posicaoMelhor(correta, melhores1) + 1)
-                                    + ";" + (posicaoMelhor(correta, melhores2) + 1)
-                                    + ";" + (posicaoMelhor(correta, melhores3) + 1)
-                                    + ";" + (posicaoMelhor(correta, melhores4) + 1)
+                                    + ";" + (posicaoMelhor(rightWord, melhoresX) + 1)
+                                    + ";" + (posicaoMelhor(rightWord, melhores1) + 1)
+                                    + ";" + (posicaoMelhor(rightWord, melhores2) + 1)
+                                    + ";" + (posicaoMelhor(rightWord, melhores3) + 1)
+                                    + ";" + (posicaoMelhor(rightWord, melhores4) + 1)
                                     + ";" + melhoresX.get(0).getPalavraErrada()
                                     + ";" + melhores1.get(0).getPalavraErrada()
                                     + ";" + melhores2.get(0).getPalavraErrada()
@@ -431,15 +376,15 @@ public class Principal {
                                     + ";" + melhores4.get(0).getPalavraErrada());
                         }
                     }// if tamanho palavra
-                    palavraErrada = reader.readLine();
-                    palavra = palavraErrada;
+                    word = reader.readLine();
                 }//while palavras incorretas
-
             }//if $
             //Envia buffer para o arquivo
             if (imprimir) {
                 out.flush();
             }
-        }//while dicionario        
+        }//END while dictionary
+
+        System.out.println(">>>> END OF EXECUTION.");
     }
 }
