@@ -17,7 +17,7 @@ import org.simmetrics.StringMetric;
 import org.simmetrics.metrics.GeneralizedJaccard;
 import org.simmetrics.tokenizers.Tokenizers;
 
-public class Principal {
+public class Main {
 
     /**
      * It returns a gram size to be adopted.
@@ -47,20 +47,21 @@ public class Principal {
     }
 
     /**
-     * Compares the Strings with the standard Jaccard method without pre-processing.
+     * Compares the Strings with the standard Jaccard method without
+     * pre-processing.
      *
      * @param ref1 String 1 to be compared.
      * @param ref2 String 2 to be compared.
      * @param ngram Size of the grams to be generated.
      * @return The measure of similarity.
      */
-    public static float jaccardPadrao(String ref1, String ref2, int ngram) {
-        StringMetric metrica
+    public static float jaccard(String ref1, String ref2, int ngram) {
+        StringMetric metric
                 = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
                         .tokenize(Tokenizers.whitespace())
                         .tokenize(Tokenizers.qGram(ngram))
                         .build();
-        return metrica.compare(ref1, ref2);
+        return metric.compare(ref1, ref2);
     }
 
     /**
@@ -80,7 +81,7 @@ public class Principal {
         for (int i = 0; i < ref1.length(); i++) {
             vref1[ref1.charAt(i)]++;
         }
-        
+
         //Calculates the amount of occurrences of each letter in ref2
         int[] vref2 = new int[256];
         for (int i = 0; i < ref2.length(); i++) {
@@ -92,9 +93,9 @@ public class Principal {
             sum = sum + Math.abs(vref1[i] - vref2[i]);
         }
         //Calculates the mean of the difference by the mean size
-        double parcial = sum / ((double) (ref1.length() + ref2.length()));
+        double partial = sum / ((double) (ref1.length() + ref2.length()));
 
-        return 1 - parcial;
+        return 1 - partial;
     }
 
     /**
@@ -105,10 +106,10 @@ public class Principal {
      *
      * @return Position the correct word in the list or -1.
      */
-    public static int bestPosition(String rightWord, ArrayList<Palavra> list) {
+    public static int bestPosition(String rightWord, ArrayList<Word> list) {
         int position = -1;
         for (int i = 0; i < list.size(); i++) {
-            if (rightWord.equalsIgnoreCase(list.get(i).getPalavraErrada())) {
+            if (rightWord.equalsIgnoreCase(list.get(i).getWrongWord())) {
                 return i;
             }
         }
@@ -122,11 +123,11 @@ public class Principal {
      * @param rightWord String of the correct word.
      * @param method Method to be used in the analysis.
      */
-    public static void imprime(ArrayList<Palavra> list, String rightWord, int method) {
+    public static void imprime(ArrayList<Word> list, String rightWord, int method) {
         for (int i = 0; i < 10; i++) {
-            System.out.println(" top(" + (i + 1) + ") gram(" + method + ")= " + list.get(i).getPalavraErrada() + " = " + list.get(i).getResultado());
+            System.out.println(" top(" + (i + 1) + ") gram(" + method + ")= " + list.get(i).getWrongWord() + " = " + list.get(i).getResult());
         }
-        System.out.println("  > " + rightWord + " na posição = " + (bestPosition(rightWord, list) + 1));
+        System.out.println("  > " + rightWord + " at position = " + (bestPosition(rightWord, list) + 1));
         System.out.println("");
     }
 
@@ -165,11 +166,11 @@ public class Principal {
     /**
      * The method is used to calculate the relative difference of length between
      * two words.
-     * 
+     *
      * @param rightWord String of the correct word.
      * @param word Another word.
      * @return The value of the relative difference.
-     */     
+     */
     private static double lengthDifference(String rightWord, String word) {
         return Math.abs(rightWord.length() - word.length()) / (double) rightWord.length();
     }
@@ -223,56 +224,58 @@ public class Principal {
                     if (lengthDifference(rightWord, word) < 0.5) {
 
                         if (print == false) {
-                            System.out.println("correta = " + rightWord + "(" + rightWord.length() + ") / analisada =" + word + "(" + word.length() + ") / difAbs=" + absoluteDifference(rightWord, word) + "\n");
+                            System.out.println("right = " + rightWord + "(" + rightWord.length() + ") / analyzed =" + word + "(" + word.length() + ") / difAbs=" + absoluteDifference(rightWord, word) + "\n");
                         }
 
                         //Used as a similarity ranking for each method
-                        ArrayList<Palavra> melhores1 = new ArrayList<Palavra>();
-                        ArrayList<Palavra> melhores2 = new ArrayList<Palavra>();
-                        ArrayList<Palavra> melhores3 = new ArrayList<Palavra>();
-                        ArrayList<Palavra> melhores4 = new ArrayList<Palavra>();
-                        ArrayList<Palavra> melhoresX = new ArrayList<Palavra>();
+                        ArrayList<Word> bestList1 = new ArrayList<Word>();
+                        ArrayList<Word> bestList2 = new ArrayList<Word>();
+                        ArrayList<Word> bestList3 = new ArrayList<Word>();
+                        ArrayList<Word> bestList4 = new ArrayList<Word>();
+                        ArrayList<Word> bestListX = new ArrayList<Word>();
 
+                        //Scrolls through the dictionary list.
                         for (int i = 0; i < dictionary.size(); i++) {
 
-                            String palavraDicionario = dictionary.get(i);
+                            //take the word i from the dictionary list
+                            String dictionaryWord = dictionary.get(i);
 
                             // Below, the calculation of similarities between the wrong word and the current dictionary word
-                            double resultado1 = jaccardPadrao(word, palavraDicionario, 1);
-                            melhores1.add(new Palavra(word, palavraDicionario, resultado1, 1));
+                            double result1 = jaccard(word, dictionaryWord, 1);
+                            bestList1.add(new Word(word, dictionaryWord, result1, 1));
 
-                            double resultado2 = jaccardPadrao(word, palavraDicionario, 2);
-                            melhores2.add(new Palavra(word, palavraDicionario, resultado2, 2));
+                            double result2 = jaccard(word, dictionaryWord, 2);
+                            bestList2.add(new Word(word, dictionaryWord, result2, 2));
 
-                            double resultado3 = jaccardPadrao(word, palavraDicionario, 3);
-                            melhores3.add(new Palavra(word, palavraDicionario, resultado3, 3));
+                            double result3 = jaccard(word, dictionaryWord, 3);
+                            bestList3.add(new Word(word, dictionaryWord, result3, 3));
 
-                            double resultado4 = jaccardPadrao(word, palavraDicionario, 4);
-                            melhores4.add(new Palavra(word, palavraDicionario, resultado4, 4));
+                            double result4 = jaccard(word, dictionaryWord, 4);
+                            bestList4.add(new Word(word, dictionaryWord, result4, 4));
 
                             // --------------------------------------------------------------------------
                             // X-GRAM Execution
                             // --------------------------------------------------------------------------
-                            Double absoluteDifference = absoluteDifference(word, palavraDicionario);
+                            Double absoluteDifference = absoluteDifference(word, dictionaryWord);
                             int gramSize = getGramSize(word.length());
 
                             if (absoluteDifference > 0.6) {
                                 switch (gramSize) {
                                     case 1:
-                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado1 * absoluteDifference, 1));
+                                        bestListX.add(new Word(word, dictionaryWord, result1 * absoluteDifference, 1));
                                         break;
                                     case 2:
-                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado2 * absoluteDifference, 2));
+                                        bestListX.add(new Word(word, dictionaryWord, result2 * absoluteDifference, 2));
                                         break;
                                     case 3:
-                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado3 * absoluteDifference, 3));
+                                        bestListX.add(new Word(word, dictionaryWord, result3 * absoluteDifference, 3));
                                         break;
                                     case 4:
-                                        melhoresX.add(new Palavra(word, palavraDicionario, resultado4 * absoluteDifference, 4));
+                                        bestListX.add(new Word(word, dictionaryWord, result4 * absoluteDifference, 4));
                                         break;
                                 }
                             } else {
-                                melhoresX.add(new Palavra(word, palavraDicionario, 0, gramSize));
+                                bestListX.add(new Word(word, dictionaryWord, 0, gramSize));
                             }
 
                             //System.out.println("WORD " + word + " DICTIONARY " + palavraDicionario + " GRAM: " + gramSize + " AD: " + absoluteDifference);
@@ -280,31 +283,31 @@ public class Principal {
                         }
 
                         //Sorts lists of results
-                        Collections.sort(melhoresX);
-                        Collections.sort(melhores1);
-                        Collections.sort(melhores2);
-                        Collections.sort(melhores3);
-                        Collections.sort(melhores4);
+                        Collections.sort(bestListX);
+                        Collections.sort(bestList1);
+                        Collections.sort(bestList2);
+                        Collections.sort(bestList3);
+                        Collections.sort(bestList4);
 
                         if (print == false) {
-                            imprime(melhoresX, rightWord, 0);
-                            imprime(melhores1, rightWord, 1);
-                            imprime(melhores2, rightWord, 2);
-                            imprime(melhores3, rightWord, 3);
-                            imprime(melhores4, rightWord, 4);
+                            imprime(bestListX, rightWord, 0);
+                            imprime(bestList1, rightWord, 1);
+                            imprime(bestList2, rightWord, 2);
+                            imprime(bestList3, rightWord, 3);
+                            imprime(bestList4, rightWord, 4);
                         } else {
                             out.println(rightWord + ";" + word
                                     //The first of each list
-                                    + ";" + (bestPosition(rightWord, melhoresX) + 1)
-                                    + ";" + (bestPosition(rightWord, melhores1) + 1)
-                                    + ";" + (bestPosition(rightWord, melhores2) + 1)
-                                    + ";" + (bestPosition(rightWord, melhores3) + 1)
-                                    + ";" + (bestPosition(rightWord, melhores4) + 1)
-                                    + ";" + melhoresX.get(0).getPalavraErrada()
-                                    + ";" + melhores1.get(0).getPalavraErrada()
-                                    + ";" + melhores2.get(0).getPalavraErrada()
-                                    + ";" + melhores3.get(0).getPalavraErrada()
-                                    + ";" + melhores4.get(0).getPalavraErrada());
+                                    + ";" + (bestPosition(rightWord, bestListX) + 1)
+                                    + ";" + (bestPosition(rightWord, bestList1) + 1)
+                                    + ";" + (bestPosition(rightWord, bestList2) + 1)
+                                    + ";" + (bestPosition(rightWord, bestList3) + 1)
+                                    + ";" + (bestPosition(rightWord, bestList4) + 1)
+                                    + ";" + bestListX.get(0).getWrongWord()
+                                    + ";" + bestList1.get(0).getWrongWord()
+                                    + ";" + bestList2.get(0).getWrongWord()
+                                    + ";" + bestList3.get(0).getWrongWord()
+                                    + ";" + bestList4.get(0).getWrongWord());
                         }
                     }// if word size
                     word = reader.readLine();
