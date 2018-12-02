@@ -218,8 +218,10 @@ public class Main {
             // If it is a target word
             if (word.charAt(0) == '$') {
 
+                //remove the $ symbol
                 String rightWord = word.substring(1, word.length());
 
+                //Incorrect word reading
                 word = reader.readLine();
 
                 // While there is a wrong word
@@ -283,7 +285,7 @@ public class Main {
                                 bestListX.add(new Word(word, dictionaryWord, 0, gramSize));
                             }
 
-                            //System.out.println("WORD " + word + " DICTIONARY " + palavraDicionario + " GRAM: " + gramSize + " AD: " + absoluteDifference);
+                            //System.out.println("WORD " + word + " DICTIONARY " + dictionaryWord + " GRAM: " + gramSize + " AD: " + absoluteDifference);
                             // --------------------------------------------------------------------------
                         }
 
