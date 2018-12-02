@@ -147,18 +147,23 @@ public class Main {
      * Loads of dictionary word in the memory to accelerate the test execution
      *
      * @return List of dicionary.
-     * @throws FileNotFoundException
-     * @throws IOException
      */
-    public static List<String> loadDictionary() throws FileNotFoundException, IOException {
+    public static List<String> loadDictionary() {
         //Defines the String string of the dictionary
         List<String> list = new ArrayList<>(194433);
-        java.io.Reader input = new FileReader("dicionario_en.txt");
-        BufferedReader reader = new BufferedReader(input);
-        String wordDicitionary = reader.readLine();
-        while (wordDicitionary != null) {
-            list.add(wordDicitionary);
-            wordDicitionary = reader.readLine();
+        java.io.Reader input;
+        try {
+            input = new FileReader("dicionario_en.txt");
+            BufferedReader reader = new BufferedReader(input);
+            String wordDicitionary = reader.readLine();
+            while (wordDicitionary != null) {
+                list.add(wordDicitionary);
+                wordDicitionary = reader.readLine();
+            }
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex);
+        } catch (IOException ex) {
+            System.err.println(ex);
         }
         return list;
     }
