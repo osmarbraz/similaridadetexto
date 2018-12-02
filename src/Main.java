@@ -57,7 +57,7 @@ public class Main {
      */
     public static float jaccard(String ref1, String ref2, int ngram) {
         StringMetric metric
-                = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<String>())
+                = org.simmetrics.builders.StringMetricBuilder.with(new GeneralizedJaccard<>())
                         .tokenize(Tokenizers.whitespace())
                         .tokenize(Tokenizers.qGram(ngram))
                         .build();
@@ -184,6 +184,7 @@ public class Main {
      * Main method.
      *
      * @param args
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         // ----------------------------------------------------------------------------------------------------
@@ -191,7 +192,9 @@ public class Main {
         // ----------------------------------------------------------------------------------------------------
         boolean print = true;
 
+        //output file
         PrintWriter out = null;
+        //treats output on screen or file
         if (print) {
             String file = "output_" + getDateTime() + ".csv";
             out = new PrintWriter(new FileWriter(file));
@@ -235,11 +238,11 @@ public class Main {
                         }
 
                         //Used as a similarity ranking for each method
-                        ArrayList<Word> bestList1 = new ArrayList<Word>();
-                        ArrayList<Word> bestList2 = new ArrayList<Word>();
-                        ArrayList<Word> bestList3 = new ArrayList<Word>();
-                        ArrayList<Word> bestList4 = new ArrayList<Word>();
-                        ArrayList<Word> bestListX = new ArrayList<Word>();
+                        ArrayList<Word> bestList1 = new ArrayList<>();
+                        ArrayList<Word> bestList2 = new ArrayList<>();
+                        ArrayList<Word> bestList3 = new ArrayList<>();
+                        ArrayList<Word> bestList4 = new ArrayList<>();
+                        ArrayList<Word> bestListX = new ArrayList<>();
 
                         //Scrolls through the dictionary list.
                         for (int i = 0; i < dictionary.size(); i++) {
@@ -296,6 +299,7 @@ public class Main {
                         Collections.sort(bestList3);
                         Collections.sort(bestList4);
 
+                        //treats output on screen or file
                         if (print == false) {
                             imprime(bestListX, rightWord, 0);
                             imprime(bestList1, rightWord, 1);
@@ -320,7 +324,7 @@ public class Main {
                     word = reader.readLine();
                 }//while misspelled words
             }//if $
-            //Send buffer to filez
+            //Send buffer to file
             if (print) {
                 out.flush();
             }
