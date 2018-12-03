@@ -69,9 +69,9 @@ public class Main {
      *
      * @param ref1 Word 1
      * @param ref2 Word 2
-     * @return Absolute difference between the letters of the words.
+     * @return Absolute similarity between the letters of the words.
      */
-    public static double absoluteDifference(String ref1, String ref2) {
+    public static double absoluteSimilarity(String ref1, String ref2) {
         //Lowercase ref1 and ref2
         ref1 = ref1.toLowerCase();
         ref2 = ref2.toLowerCase();
@@ -92,7 +92,7 @@ public class Main {
         for (int i = 0; i < 256; i++) {
             sum = sum + Math.abs(vref1[i] - vref2[i]);
         }
-        //Calculates the mean of the difference by the mean size
+        //Calculates the mean of the similarity by the mean size
         double partial = sum / ((double) (ref1.length() + ref2.length()));
 
         return 1 - partial;
@@ -234,7 +234,7 @@ public class Main {
                     if (lengthDifference(rightWord, word) < 0.5) {
 
                         if (print == false) {
-                            System.out.println("right = " + rightWord + "(" + rightWord.length() + ") / analyzed =" + word + "(" + word.length() + ") / difAbs=" + absoluteDifference(rightWord, word) + "\n");
+                            System.out.println("right = " + rightWord + "(" + rightWord.length() + ") / analyzed =" + word + "(" + word.length() + ") / difAbs=" + absoluteSimilarity(rightWord, word) + "\n");
                         }
 
                         //Used as a similarity ranking for each method
@@ -266,7 +266,7 @@ public class Main {
                             // --------------------------------------------------------------------------
                             // X-GRAM Execution
                             // --------------------------------------------------------------------------
-                            Double absoluteDifference = absoluteDifference(word, dictionaryWord);
+                            Double absoluteDifference = absoluteSimilarity(word, dictionaryWord);
                             int gramSize = getGramSize(word.length());
 
                             if (absoluteDifference > 0.6) {
@@ -288,7 +288,7 @@ public class Main {
                                 bestListX.add(new Word(word, dictionaryWord, 0, gramSize));
                             }
 
-                            //System.out.println("WORD " + word + " DICTIONARY " + dictionaryWord + " GRAM: " + gramSize + " AD: " + absoluteDifference);
+                            //System.out.println("WORD " + word + " DICTIONARY " + dictionaryWord + " GRAM: " + gramSize + " AD: " + absoluteSimilarity);
                             // --------------------------------------------------------------------------
                         }
 
