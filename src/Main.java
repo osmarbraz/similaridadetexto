@@ -94,7 +94,8 @@ public class Main {
         }
         //Calculates the mean of the similarity by the mean size
         double partial = sum / ((double) (ref1.length() + ref2.length()));
-
+           
+        //Return similarity
         return 1 - partial;
     }
 
